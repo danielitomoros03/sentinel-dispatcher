@@ -43,7 +43,7 @@ docs/               enunciado e informe
 
 - Daniel Moros, C.I. 30035269
 - Yoseanni Bermudez, C.I. 30347186
-- Donander Huertas, C.I. [COMPLETAR]
+- Donander Huertas, C.I. 31518315
 
 ## Uso de Inteligencia Artificial
 
