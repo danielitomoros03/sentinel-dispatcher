@@ -43,9 +43,9 @@ docs/               enunciado e informe
 
 - Daniel Moros, C.I. 30035269
 - Yoseanni Bermudez, C.I. 30347186
-- Donander Huertas, C.I. 31518315
+- Donander Huertas, C.I. [COMPLETAR]
 
 ## Uso de Inteligencia Artificial
 
-En este proyecto se usó IA (Claude, de Anthropic). El detalle
+En este proyecto se usó IA (Claude Code y Claude, de Anthropic). El detalle
 está en la sección de metodología del informe técnico.

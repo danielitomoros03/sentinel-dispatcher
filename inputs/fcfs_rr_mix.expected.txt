@@ -1,0 +1,19 @@
+Fixed parameters: Queue 0 [Q=2] | Queue 1 [Q=4] | Queue 2 [FCFS]
+
+[T-0000] ARRIVAL: Sentinel ID:1 [Type: Heavy]
+[T-0000] ARRIVAL: Sentinel ID:2 [Type: Heavy]
+[T-0001] ARRIVAL: Sentinel ID:3 [Type: Command]
+[T-0001] ARRIVAL: Sentinel ID:4 [Type: Command]
+[T-0001] PREEMPTED: Sentinel 1 preempted by higher-priority queue 0
+[T-0003] QUANTUM_EXPIRED: Sentinel 3 yields CPU via RR rotation (Q=2)
+[T-0005] QUANTUM_EXPIRED: Sentinel 4 yields CPU via RR rotation (Q=2)
+[T-0006] COMPLETED: Sentinel ID:3 -> Turnaround Time: 5 ticks
+[T-0007] COMPLETED: Sentinel ID:4 -> Turnaround Time: 6 ticks
+[T-0009] COMPLETED: Sentinel ID:1 -> Turnaround Time: 9 ticks
+[T-0011] COMPLETED: Sentinel ID:2 -> Turnaround Time: 11 ticks
+
+==================== GLOBAL PERFORMANCE METRICS ====================
+        - Total Simulation Time : 11 clock ticks.
+        - System Throughput     : 0.36 sentinels/tick.
+        - Average Waiting Time : 5.00 ticks.
+====================================================================

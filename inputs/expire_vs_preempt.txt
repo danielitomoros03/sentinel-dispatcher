@@ -1,0 +1,4 @@
+# En T4 el Driller 1 agota Q=4 justo cuando llega el Command 2.
+# Gana la fase 2 (expiracion): se reporta QUANTUM_EXPIRED, no PREEMPTED.
+0 1 1 5
+4 2 0 1

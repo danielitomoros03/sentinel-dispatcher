@@ -1,0 +1,1 @@
+Error: inputs/invalid/malformed.txt:1: se esperaban 4 enteros (llegada id cola rafaga)

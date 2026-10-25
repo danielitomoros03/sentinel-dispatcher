@@ -1,0 +1,275 @@
+                                 Universidad Central de Venezuela
+                                       Facultad de Ciencias
+                                     Escuela de Computación
+                                    Sistemas Operativos (6004)
+
+
+
+
+                                        Proyecto #2
+                       Orquestador del Enjambre de Centinelas (The Matrix)
+
+
+      Las defensas de Sion están al borde del colapso. Un enjambre masivo de centinelas se apro-
+      xima velozmente a través de los túneles del subsuelo. Se le solicita a los guerreros de la
+      resistencia el diseño y desarrollo de un sistema de orquestación táctica centralizado, de-
+      nominado «sentinel-dispatcher», capaz de clasificar, priorizar y dirigir los contraataques
+      defensivos de las unidades centinelas aliadas de Sion antes de que las máquinas enemigas
+      penetren el domo principal de la ciudad.
+
+
+
+1. Requerimientos y Especificaciones Detalladas
+
+El objetivo de este proyecto es implementar un programa en lenguaje C, bajo estándares de Linux
+(POSIX), denominado sentinel-dispatcher. Este software simula un motor de planificación por
+tics de reloj que administrará el flujo y ejecución de diferentes tareas concurrentes representadas por
+centinelas de combate.
+
+
+1.1. El Esquema de Planificación (Colas Multinivel Apropiativas)
+
+El planificador simulará un entorno monoprocesador síncrono. El tiempo avanza de manera discreta
+en unidades enteras denominadas «Tics Globales» (𝑇𝑔 ). El procesador (CPU_0) seleccionará en cada
+tic la tarea a procesar basándose en un esquema jerárquico de tres colas de prioridad estricta:
+
+
+   1. Cola 0 (Centinelas de Comando - Alta Prioridad): Diseñada para maniobras tácticas de
+      respuesta rápida. Utiliza el algoritmo Round Robin (RR) con un quantum de 𝑄0 = 2 tics.
+      Tiene prioridad absoluta sobre las demás colas.
+
+   2. Cola 1 (Centinelas Perforadores - Prioridad Media): Diseñada para tareas operativas ba-
+      lanceadas. Utiliza el algoritmo Round Robin (RR) con un quantum de 𝑄1 = 4 tics. Solo se
+      planifica si la Cola 0 está vacía.
+
+   3. Cola 2 (Centinelas de Desgaste - Baja Prioridad): Diseñada para cómputo pesado de sopor-
+      te estratégico. Utiliza el algoritmo First-Come, First-Served (FCFS) puro. Solo se planifica
+      si las colas 0 y 1 están completamente vacías.
+
+
+
+
+                                           Semestre I-2026
+1.2. Lógica de Expropiación por Prioridad y Desempate
+
+El despachador implementará un modelo apropiativo determinista. En cada instante o tic global 𝑇𝑔 ,
+los eventos se resolverán bajo el siguiente orden de precedencia:
+
+
+  1. Fase de Admisión (Llegadas): Se leen los centinelas programados para llegar en 𝑇𝑔 y se
+     encolan al final de sus respectivas colas de prioridad.
+
+  2. Fase de Expiración de Quantum y Rotación: Si el centinela en CPU_0 consumió su quan-
+     tum en el tic que acaba de concluir sin haber terminado su ráfaga, es retirado de la CPU y
+     re-encolado al final de su cola (quedando ubicado detrás de los centinelas admitidos en este
+     mismo tic).
+
+  3. Fase de Expropiación (Preemption): Si el centinela activo aún dispone de quantum pero
+     existe alguna tarea lista en una cola de prioridad estrictamente superior (por ejemplo, arriba
+     una tarea a Cola 0 mientras ejecuta una de Cola 1 o Cola 2), el centinela activo es desalojado
+     inmediatamente y devuelto a la cabeza de su cola.
+
+  4. Fase de Despacho (Dispatch): Se extrae y asigna a la CPU el centinela ubicado en la cabeza
+     de la cola no vacía de mayor prioridad.
+
+
+Mecanismo de Desempate y Alternancia (Misma Prioridad):
+
+
+     En Cola 0 (𝑄0 = 2) y Cola 1 (𝑄1 = 4): Si hay más de un centinela en la misma cola, estos
+     alternan mediante Round Robin. Cuando un centinela agota su quantum, cede la CPU y pasa
+     al final de la cola. Si un centinela es expropiado por una cola superior antes de terminar su
+     quantum, conserva su quantum consumido y su ráfaga restante al ser reanudado.
+
+     En Cola 2 (FCFS): No existe alternancia por quantum entre centinelas de prioridad baja. Una
+     vez que un centinela toma la CPU, no la cede a otro centinela de su mismo nivel hasta finalizar
+     su ráfaga completa. No obstante, es expropiado si arriba cualquier tarea a Cola 0 o Cola 1.
+
+
+1.3. Estructura del Archivo de Entrada
+
+El archivo de entrada es un documento de texto plano donde cada línea describe un centinela único.
+Las líneas que comiencen con el caracter # representan comentarios y deben ignorarse. El formato
+de cada línea es el siguiente:
+
+
+      # Tiempo de Llegada | ID Centinela | Tipo de Cola | Rafaga Total
+      0 101 0 3
+      0 301 2 8
+      2 102 0 2
+      4 201 1 5
+
+                   Listing 1: Formato del archivo de escenario ataque_sion.txt.
+
+
+
+
+                                         Semestre I-2026
+     Tiempo de Llegada: Tic global de reloj (𝑇𝑔 ) en el que el centinela se introduce en la lista de
+     listos.
+
+     ID Centinela: Entero positivo único que representa la identidad del centinela táctico.
+
+     Tipo de Cola: Entero que define su nivel de prioridad estricta (0 = Comando, 1 = Perforador,
+     2 = Pesado).
+
+     Rafaga Total: Unidades discretas de tiempo (tics de CPU) que el centinela requiere en el pro-
+     cesador para completar su ciclo defensivo.
+
+
+
+2. La Tabla de Tareas y Sincronización
+
+Deberán diseñar e implementar la estructura del Bloque de Control de Tarea (TCB) para repre-
+sentar el contexto operativo de cada centinela. Esta estructura deberá contener, como mínimo, los
+siguientes campos:
+
+
+     Identificador único del centinela (id).
+
+     Estado de ejecución (NEW, READY, RUNNING, INTERRUPTED, FINISHED).
+
+     Prioridad de la cola a la que pertenece (priority).
+
+     Tiempo de llegada al sistema (arrivaltime).
+
+     Ráfaga de CPU total de procesamiento requerida (totalBurst).
+
+     Ráfaga de CPU restante de procesamiento (remainingBurst).
+
+     Quantum consumido acumulado en la ráfaga actual (usedQuantum).
+
+     Marcas de tiempo de auditoría (waitTime, returnTime).
+
+
+2.1. Mecanismo de Ejecución y Barrera de Fase Síncrona
+
+El simulador debe estructurarse de manera multihilo para modelar con precisión la separación física
+entre la llegada de interrupciones de hardware y el procesamiento de cómputo de la CPU:
+
+
+  1. Hilo Maestro (Reloj e Inserción): Controla el avance discreto del tiempo. En cada tic global
+     𝑇𝑔 , evalúa si existen arribos en el archivo de escenario correspondientes a ese instante, crea los
+     correspondientes bloques TCB y los encola en las colas respectivas de forma segura y atómica.
+
+  2. Hilo Trabajador (CPU_0): Representa el núcleo físico disponible para el cómputo. En cada tic
+     global, si el procesador no está ocioso, ejecuta una unidad de ráfaga de la tarea activa, evalúa
+     su estado de expropiación o terminación, y procesa la alternancia.
+
+
+
+
+                                          Semestre I-2026
+3. Especificación de la Salida por Terminal
+
+El programa debe recibir la configuración del escenario desde la consola utilizando la siguiente in-
+terfaz de parámetros:
+
+
+1   $ ./sentinel-dispatcher [-v] --input <input_file>
+
+                           Listing 2: Sintaxis de ejecución del programa.
+
+
+
+      –input <archivo_escenario>: Ruta del archivo de texto que contiene las especificaciones
+      de llegada, ráfaga y prioridad de los centinelas.
+
+      [-v] / [–verbose]: Parámetro opcional. Si está presente, el programa se ejecutará en «Mo-
+      do Depuración» (Verbose), imprimiendo el estado detallado de las colas, las decisiones del
+      despachador y los cambios de contexto en cada tic. De omitirse, operará en «Modo Estándar»,
+      mostrando únicamente las transiciones de estados esenciales (arribos, expropiaciones, finali-
+      zaciones) y las métricas finales.
+
+
+3.0.1. Salida en Modo Estándar
+
+Muestra únicamente hitos operativos críticos y estadísticas resumidas de los centinelas:
+
+
+      $ ./sentinel-dispatcher --input inputs/sion_attack.txt
+      Fixed parameters: Queue 0 [Q=2] | Queue 1 [Q=4] | Queue 2 [FCFS]
+
+      [T-0000] ARRIVAL: Sentinel ID:101 [Type: Command]
+      [T-0000] ARRIVAL: Sentinel ID:301 [Type: Heavy]
+      [T-0002] ARRIVAL: Sentinel ID:102 [Type: Command]
+      [T-0002] QUANTUM_EXPIRED: Sentinel 101 yields CPU via RR rotation (Q=2)
+      [T-0004] ARRIVAL: Sentinel ID:201 [Type: Driller]
+      [T-0004] COMPLETED: Sentinel ID:102 -> Turnaround Time: 2 ticks
+      [T-0005] COMPLETED: Sentinel ID:101 -> Turnaround Time: 5 ticks
+      [T-0010] COMPLETED: Sentinel ID:201 -> Turnaround Time: 6 ticks
+      [T-0018] COMPLETED: Sentinel ID:301 -> Turnaround Time: 18 ticks
+
+      ==================== GLOBAL PERFORMANCE METRICS ====================
+              - Total Simulation Time : 18 clock ticks.
+              - System Throughput     : 0.22 sentinels/tick.
+              - Average Waiting Time : 3.25 ticks.
+      ====================================================================
+
+
+
+
+3.0.2. Salida en Modo Depuración (Verbose)
+
+Imprime trazas internas detalladas de los estados de las colas, decisiones del planificador, consumo
+del quantum y expropiaciones en cada ciclo síncrono.
+
+
+
+
+                                           Semestre I-2026
+4. Consideraciones y Formato de Entrega
+
+   El proyecto debe desarrollarse en grupos de dos (2) a tres (3) personas. Está permitido que los
+   grupos estén conformados por estudiantes de diferentes secciones de la materia.
+
+   La implementación deberá estar codificada en C (C99 o superior) y estar diseñada para funcio-
+   nar sin fallos bajo sistemas operativos de la familia GNU/Linux. Se permite explícitamente el
+   uso de librerías estándar de C y librerías externas que faciliten el desarrollo, siempre y cuando
+   se justifique su uso en el informe y no suplanten la labor formativa exigida.
+
+   Es obligatorio el uso de un archivo Makefile. El comando make debe ensamblar todo el pro-
+   yecto partiendo de los fuentes y producir un binario final. Aquellos proyectos cuyo código
+   presente errores de compilación y no generen un ejecutable al usar make serán califi-
+   cados con cero (0) automáticamente.
+
+   Se sugiere fuertemente mantener el código del equipo bajo un control de versiones en la nube
+   utilizando repositorios como GitHub para facilitar la lectura del código y corrección por parte
+   del equipo docente.
+
+   El código fuente debe ser extensamente comentado y estructurado apropiadamente. Un código
+   correctamente comentado y presentado es mucho más fácil de interpretar y de corregir.
+
+   La corrección requerirá una defensa presencial obligatoria. Se realizará una interrogación
+   individual y grupal del código fuente.
+
+   El proyecto debe estar acompañado de un informe técnico en formato PDF. Allí deben que-
+   dar explicadas detalladamente las decisiones arquitectónicas. Cualquier fragmento de lógica
+   que no esté justificado en el informe, se considerará como código que el grupo no domina y
+   será descontado de la evaluación.
+
+   Las copias u ocultamiento de autoría real serán penalizados anulando toda calificación para
+   todos los grupos involucrados. El uso de herramientas de Inteligencia Artificial está permitido
+   siempre y cuando se declare su uso abiertamente en la metodología del Informe Técnico. Un
+   uso de IA no declarado tipificará como fraude.
+
+   Todo el código fuente (.c, .h), el Makefile y el Informe Técnico (en PDF) deben agruparse en
+   un único archivo comprimido (zip o tar). El archivo empaquetado debe nombrarse usando
+   la estructura Proyecto2_CI1_CI2_CI3.zip (Donde CI son las Cédulas de Identidad).
+
+   El archivo debe ser enviado al correo laboratoriosisop@gmail.com junto con el enlace del
+   repositorio en caso de tenerlo, con el asunto: «[SO]_[Proy2]_[CI1]_[CI2]_[CI3]» (Don-
+   de CI son las Cédulas de Identidad).
+
+   La entrega del proyecto será aceptada hasta el 25 de Octubre de 2026 antes de las 11:59 PM.
+   No se evaluarán entregas realizadas fuera de esta fecha.
+
+
+
+
+                                                          made by github/druxorey GDSO I - 2026
+
+
+
+                                        Semestre I-2026
+

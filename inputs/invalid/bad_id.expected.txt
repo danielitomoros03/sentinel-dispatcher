@@ -1,0 +1,1 @@
+Error: inputs/invalid/bad_id.txt:1: ID invalido (0); debe ser un entero positivo

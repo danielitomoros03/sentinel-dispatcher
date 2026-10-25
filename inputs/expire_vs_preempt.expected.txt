@@ -1,0 +1,13 @@
+Fixed parameters: Queue 0 [Q=2] | Queue 1 [Q=4] | Queue 2 [FCFS]
+
+[T-0000] ARRIVAL: Sentinel ID:1 [Type: Driller]
+[T-0004] ARRIVAL: Sentinel ID:2 [Type: Command]
+[T-0004] QUANTUM_EXPIRED: Sentinel 1 yields CPU via RR rotation (Q=4)
+[T-0005] COMPLETED: Sentinel ID:2 -> Turnaround Time: 1 ticks
+[T-0006] COMPLETED: Sentinel ID:1 -> Turnaround Time: 6 ticks
+
+==================== GLOBAL PERFORMANCE METRICS ====================
+        - Total Simulation Time : 6 clock ticks.
+        - System Throughput     : 0.33 sentinels/tick.
+        - Average Waiting Time : 0.50 ticks.
+====================================================================

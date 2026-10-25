@@ -1,0 +1,1 @@
+Error: inputs/invalid/negative_arrival.txt:2: tiempo de llegada invalido (-1); debe estar entre 0 y 1000000000

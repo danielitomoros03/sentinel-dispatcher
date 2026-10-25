@@ -1,0 +1,8 @@
+# Llegadas desordenadas en el archivo: se ordenan por tiempo y, a igual
+# tiempo, por orden de aparicion (5 antes que 6).
+# CPU ociosa en T0-T2 y en T6-T11.
+# El Command 5 termina justo cuando agota Q=2: COMPLETED, sin QUANTUM_EXPIRED.
+
+12 7 1 2
+3 5 0 2
+3 6 2 1

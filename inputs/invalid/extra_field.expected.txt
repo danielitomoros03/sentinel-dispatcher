@@ -1,0 +1,1 @@
+Error: inputs/invalid/extra_field.txt:1: hay texto de mas despues de la rafaga

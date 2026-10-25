@@ -1,0 +1,1 @@
+Error: inputs/invalid/bad_queue.txt:2: cola invalida (3) para el ID 7; debe ser 0, 1 o 2

@@ -1,0 +1,6 @@
+# Un Heavy (FCFS) es expropiado por un Command en T2. Luego llega un Driller
+# en T3, que tambien tiene prioridad sobre el Heavy. El Heavy retoma en T7
+# con la rafaga que le quedaba.
+0 1 2 5
+2 2 0 2
+3 3 1 3

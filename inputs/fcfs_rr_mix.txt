@@ -1,0 +1,6 @@
+# Dos Heavy (1 y 2) en FCFS: 1 es expropiado en T1 y vuelve a la cabeza de
+# la cola 2, delante de 2. Los Command 3 y 4 alternan por RR con Q=2.
+0 1 2 3
+0 2 2 2
+1 3 0 3
+1 4 0 3

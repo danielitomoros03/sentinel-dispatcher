@@ -1,0 +1,14 @@
+Fixed parameters: Queue 0 [Q=2] | Queue 1 [Q=4] | Queue 2 [FCFS]
+
+[T-0003] ARRIVAL: Sentinel ID:5 [Type: Command]
+[T-0003] ARRIVAL: Sentinel ID:6 [Type: Heavy]
+[T-0005] COMPLETED: Sentinel ID:5 -> Turnaround Time: 2 ticks
+[T-0006] COMPLETED: Sentinel ID:6 -> Turnaround Time: 3 ticks
+[T-0012] ARRIVAL: Sentinel ID:7 [Type: Driller]
+[T-0014] COMPLETED: Sentinel ID:7 -> Turnaround Time: 2 ticks
+
+==================== GLOBAL PERFORMANCE METRICS ====================
+        - Total Simulation Time : 14 clock ticks.
+        - System Throughput     : 0.21 sentinels/tick.
+        - Average Waiting Time : 0.67 ticks.
+====================================================================

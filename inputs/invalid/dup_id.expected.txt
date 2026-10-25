@@ -1,0 +1,1 @@
+Error: inputs/invalid/dup_id.txt:3: ID duplicado 1 (ya aparece en la linea 1)

@@ -1,0 +1,7 @@
+# Un Driller (10) es expropiado en T2 con 2/4 de quantum usado.
+# Al reanudarse en T3 conserva ese quantum: agota Q=4 en T5 (no en T7)
+# y cede la CPU al otro Driller (11) que esperaba en su cola.
+# Tiempo de Llegada | ID Centinela | Tipo de Cola | Rafaga Total
+0 10 1 6
+1 11 1 3
+2 20 0 1
