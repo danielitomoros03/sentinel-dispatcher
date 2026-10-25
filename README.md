@@ -47,5 +47,5 @@ docs/               enunciado e informe
 
 ## Uso de Inteligencia Artificial
 
-En este proyecto se usó IA (Claude Code y Claude, de Anthropic). El detalle
+En este proyecto se usó IA (Claude, de Anthropic). El detalle
 está en la sección de metodología del informe técnico.
